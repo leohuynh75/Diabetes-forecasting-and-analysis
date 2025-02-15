@@ -25,5 +25,19 @@ The dataset contains the raw data of several hundred rural African-American. Thi
 ### 1. Tools
 - Google Colabs: using Python to load data, clean data, build Machine Learning models and do feature analysis.
 - Power Bi: visualizing the dataset.
-  Here is the pipeline of my work
+### 2. Techniques
+In this project, I will use two Machine Learning models: **Random Forest and XGBoost**, to forecast diabetes. Besides, this is a medical dataset, there is an imbalance between classes in target variable, which could lead to classification bias towards the majority class. Thus, I will use **oversampling technique** to solve this problem.
+And finally, to do feature analysis, I will choose **SHAPLEY** to see how features affect the outcome.
+## Methodology
+Here is a pipeline of my work:
+|![](images/pipeline.png)|
+|:--:|
+|**Fig1. Pipeline of my work**|
+### 1. Load data
+Firsly, I download the dataset from Kaggle on the above link. Then, I will import it into Google Colabs by the code:
+```python
+df = pd.read_csv('diabetes.csv')
+```
+And here is an overview of the dataset:
+
   
