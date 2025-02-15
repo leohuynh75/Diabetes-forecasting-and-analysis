@@ -39,5 +39,8 @@ Firsly, I download the dataset from Kaggle on the above link. Then, I will impor
 df = pd.read_csv('diabetes.csv')
 ```
 And here is an overview of the dataset:
+|![](images/overview.png)|
+|:--:|
+|**Fig2. First 5 rows of the dataset**|
 
   
