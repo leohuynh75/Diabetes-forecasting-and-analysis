@@ -44,4 +44,28 @@ And here is an overview of the dataset:
 |**Fig.2. First 5 rows of the dataset**|
 
 ### 2. EDA
-  
+Now, let's take a look at some descriptive information of this dataset:
+```python
+df.describe()
+```
+|![](images/description.png)|
+|:--:|
+|**Fig.3. Statistical information of numeric features in the dataset**|
+From this table, I can draw some information:
+  - Missing data appears in many columns, for example: **chol**, **hdl**, **stab.glu**, **glyhb**, etc. A summary table of the number of missing values in all columns is necessary.
+  - In terms of the distribution of features:
+      - Some features have a large range between min and max, for example, the **stab.glu** (Stabilized Glucose) column has a value range from *48* to *385*, **weight** from *99* to *325* (in lbs), etc. This shows the presence of outliers, more visual images are needed to check.
+      - The **chol** (Cholesterol) column has an average of about *207.85*, with a standard deviation of *44.44*, showing that the data has a quite large dispersion.
+      - The **glyhb** (HBA1C) column has an average value of *5.59*, but the max is up to *16.11*, which may suggest a group of patients with high blood sugar or diabetes.
+        
+Here is the number of missing values in all columns:
+
+|![](images/missing_values.png)|
+|:--:|
+|**Fig.4. Number of missing values in all columns**|
+
+Next, let's see the histogram of the dataset
+```python
+df.hist(figsize=(12, 10), bins=30)
+plt.show()
+```
