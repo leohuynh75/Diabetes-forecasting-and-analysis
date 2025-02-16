@@ -30,9 +30,9 @@ In this project, I will use two Machine Learning models: **Random Forest and XGB
 And finally, to do feature analysis, I will choose **SHAPLEY** to see how features affect the outcome.
 ## Methodology
 Here is a pipeline of my work:
-|![](images/pipeline.png)|
+|![](images/flowchart.png)|
 |:--:|
-|**Fig1. Pipeline of my work**|
+|**Fig.1. Pipeline of my work**|
 ### 1. Load data
 Firsly, I download the dataset from Kaggle on the above link. Then, I will import it into Google Colabs by the code:
 ```python
@@ -41,6 +41,7 @@ df = pd.read_csv('diabetes.csv')
 And here is an overview of the dataset:
 |![](images/overview.png)|
 |:--:|
-|**Fig2. First 5 rows of the dataset**|
+|**Fig.2. First 5 rows of the dataset**|
 
+### 2. EDA
   
