@@ -139,7 +139,7 @@ df['outcome'] = np.where(df['glyhb'] >= 6.5, 1, 0)
 |**Fig.9. Two new columns are added to the dataset**|
 
 ### 4. EDA after cleaning
-To facilitate the model building later, I will conduct the final EDA test. First, I will check the correlation between the features and the target variable. Because the target variable is binary and the features also have 2 data types: continuous and categorical. So I will divide into 2 groups to check the correlation. Group 1 will use the Point Biserial method to check the correlation between the continuous variable features and the target.
+To facilitate the model building later, I will conduct the final EDA test. First, I will check the correlation between the features and the target variable. Because the target variable is binary and the features also have 2 data types: continuous and categorical. So I will divide into 2 groups to check the correlation. Group 1 will use the **Point Biserial** method to check the correlation between the continuous variable features and the target.
 ```python
 # Check correlation
 # Continous numeric feature
@@ -151,12 +151,7 @@ for col in continuous_numeric:
     corr, p_value = pointbiserialr(df[col], df['outcome'])
     print(f"Correlation between {col} and Outcome: {corr:.4f}, p-value: {p_value:.4f}")
 ```
-And here is the result:
-|![](images/result_biserial.png)|
-|:--:|
-|**Fig.10. The correlation between continous features and target variable**|
-
-The second group will consist of categorical features, I will use Chi-square test to check the correlation between them and the target variable:
+The second group will consist of categorical features, I will use **Chi-square** test to check the correlation between them and the target variable:
 ```python
 # Categorical numeric feature
 categorical_numeric = ['location','gender','frame']
@@ -168,9 +163,10 @@ for col in categorical_numeric:
     chi2, p_value, _, _ = chi2_contingency(contingency_table)
     print(f"Chi-square test between {col} and Outcome: p-value = {p_value:.4f}")
 ```
-|![](images/chi_square.png)|
-|:--:|
-|**Fig.11. The correlation between categorical features and target variable**|
+And here is the result:
+|![](images/result_biserial.png)|![](images/chi_square.png)|
+|:--:|:--:|
+|**Fig.10. The correlation between continous features and target variable**|**Fig.11. The correlation between categorical features and target variable**|
 
 After performing EDA before conducting data preprocessing for model training, I have some preliminary assessments as follows:
   - Initial correlation analysis: I tested the correlation between features and target variables using **Point-Biserial** and **Chi-square** to determine which features are likely to affect the outcome. However, it should be noted that these tests only reflect the linear relationship between each feature and the target independently. Therefore, a feature with a p-value greater than 0.05 does not mean that it has no influence on the model, but the relationship between that feature and the outcome may be nonlinear or only clearly shown when considered together with other features. Correlation testing only provides a preliminary view of the data, helping to detect features that are likely to have a strong impact. However, to make a more comprehensive assessment of the importance of features in the model, it is necessary to use more comprehensive evaluation methods instead of just considering the independent relationship between each feature and the target.
@@ -204,5 +200,43 @@ df_final.drop('glyhb', axis=1, inplace=True)
 Now we have 403 samples and 18 columns in total.
 
 ### 6. Building Machine Learing models
+Firstly, I will load the libraries that need for building models:
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+```
+As I mentioned above, because there is a huge imbalance between the 2 classes Normal and Diabetes, I will proceed to build a prediction model for both cases, that is, without and with handling imbalance, to compare the performance. During the entire process, I will use two models: **Random Forest** and **XGBoost** to forecast and then compare which one is better.
+#### 1. Without handling imbalnce
+```python
+df_original = df_final.copy() # Make a copy to avoid disturbing the original dataset
+
+X = df_original.drop('outcome', axis=1)
+y = df_original['outcome']
+
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.3, random_state=42)
+
+# Using Random Forest to forecast
+model_1 = RandomForestClassifier(n_jobs= -1, random_state=42)
+model_1.fit(X_train, y_train)
+Y_prob_1 = model_1.predict_proba(X_test)[:,1]
+threshold = 0.3 # Set the threshold 0.3 to enhace the Recall
+Y_pred_1 = (Y_prob_1 >= threshold).astype(int)
+print(classification_report(y_test, Y_pred_1, target_names=['Normal', 'Diabetes']))
+```
+```python
+model_2 = XGBClassifier()
+model_2.fit(X_train, y_train)
+Y_prob_2 = model_2.predict_proba(X_test)[:,1]
+threshold = 0.45
+Y_pred_2 = (Y_prob_2 >= threshold).astype(int)
+print(classification_report(y_test, Y_pred_2, target_names=['Normal', 'Diabetes']))
+```
+|![](images/without_handling.png)|![](images/with_handling.png)|
+|:--:|:--:|
+| **Fig.14. Classification report of the Random Forest for the first case**| **Fig.15. Classification report of the XGBoost for the first case**|
 
 
