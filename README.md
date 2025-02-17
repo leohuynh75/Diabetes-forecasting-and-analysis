@@ -175,6 +175,10 @@ for col in categorical_numeric:
 After performing EDA before conducting data preprocessing for model training, I have some preliminary assessments as follows:
   - Initial correlation analysis: I tested the correlation between features and target variables using **Point-Biserial** and **Chi-square** to determine which features are likely to affect the outcome. However, it should be noted that these tests only reflect the linear relationship between each feature and the target independently. Therefore, a feature with a p-value greater than 0.05 does not mean that it has no influence on the model, but the relationship between that feature and the outcome may be nonlinear or only clearly shown when considered together with other features. Correlation testing only provides a preliminary view of the data, helping to detect features that are likely to have a strong impact. However, to make a more comprehensive assessment of the importance of features in the model, it is necessary to use more comprehensive evaluation methods instead of just considering the independent relationship between each feature and the target.
     
-  - Outlier handling: Based on the data distribution and the proportion of classes in the target variable, I found that the dataset has a large imbalance. Careless handling of outliers can lose important information, especially in a dataset with a limited number of samples. Therefore, I decided not to handle outliers and instead use tree-based models such as **Random Forest** or **XGBoost** to reduce the impact of outliers on the prediction results.
+  - Outlier handling: Based on the data distribution and the proportion of classes in the target variable, I found that the dataset has a large imbalance (Fig. 12). Careless handling of outliers can lose important information, especially in a dataset with a limited number of samples. Therefore, I decided not to handle outliers and instead use tree-based models such as **Random Forest** or **XGBoost** to reduce the impact of outliers on the prediction results.
+
+|![](images/pie_chart.png)|
+|:--:|
+|**Fig.12. The pie chart showing the imbalance between Normal and Diabetes classes**|
 
     
