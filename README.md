@@ -51,6 +51,7 @@ df.describe()
 |![](images/description.png)|
 |:--:|
 |**Fig.3. Statistical information of numeric features in the dataset**|
+
 From this table, I can draw some information:
   - Missing data appears in many columns, for example: **chol**, **hdl**, **stab.glu**, **glyhb**, etc. A summary table of the number of missing values in all columns is necessary.
   - In terms of the distribution of features:
@@ -64,8 +65,94 @@ Here is the number of missing values in all columns:
 |:--:|
 |**Fig.4. Number of missing values in all columns**|
 
-Next, let's see the histogram of the dataset
+Next, let's see the histogram of the dataset to have a clear view of dataset's distribution:
 ```python
 df.hist(figsize=(12, 10), bins=30)
 plt.show()
 ```
+|![](images/histogram.png)|
+|:--:|
+|**Fig.5. Histogram of all numeric features**|
+
+Then, the boxplots to check the presence of outliers:
+```python
+numeric_col = df.select_dtypes('number').columns.to_list()
+numeric_col.remove('id')
+df_melted = df[numeric_col].melt(var_name = 'Feature', value_name = 'Value')
+
+plt.figure(figsize=(12, 6))
+sns.boxplot(x="Feature", y="Value", data=df_melted)
+plt.xticks(rotation=45)  # Rotate the label name 
+plt.yscale('log') # Using log scale to see the boxplots of features with small range better
+plt.title("Boxplot của nhiều feature")
+plt.show()
+```
+|![](images/boxplots.png)|
+|:--:|
+|**Fig.6. Boxplots of all numeric features**|
+
+In summary, I must solve the problem of missing values first, then based on the situation of the dataset after cleaning, I will consider whether to handle the outliers or not. Thus, from doing EDA on the dataset, I can have an overview of the dataset to make a plane for the next step, data cleaning. 
+### 3. Data cleaning
+From the **Fig.4** above, we can see that there are so many missing values in two columns **bp.2s** and **bp.2d**, both are *262*. Thus, my solution for this is remove them from the dataset:
+```python
+df.drop(['bp.2s','bp.2d'], axis=1, inplace=True)
+```
+Next, for the remaining numeric features, I will fill NA with the mean value of each column:
+```python
+numeric_col_na = ['chol','hdl','ratio','glyhb','height','weight','bp.1s','bp.1d','waist','hip','time.ppn']
+def fill_missing_value_numeric(col_name):
+  for col in col_name:
+    df[col] = df[col].fillna(df[col].mean().round( ))
+  return df
+fill_missing_value_numeric(numeric_col_na)
+```
+|![](images/cleaning_result.png)|
+|:--:|
+|**Fig.7. The result after cleaning**|
+
+Only the feature **frame** left has *12* NA values. Since this is a categorical variable, I will fill the NA with the mode value of the column.
+```python
+df['frame'] = df['frame'].fillna(df['frame'].mode()[0])
+```
+After having a data file that no longer has any NA values, I will export this file to Excel format to use for visualization steps on Power Bi:
+```python
+df.to_excel('cleaned_data.xlsx', index=False)
+from google.colab import files # Load this package to download the cleaning file
+files.download('cleaned_data.xlsx')
+```
+Next, I will add a **BMI** column from the 2 features **height** (in inch) and **weight** (in lbs) with the aim of helping the model learn the relationship between features better. To do this, I need to change the units first: 1 kg = 0.4536 lbs and 1 inch = 0.0254 m
+|![](images/bmi.jpg)|
+|:--:|
+|**Fig.8. BMI formula**|
+
+```python
+# Add BMI column from weight and height
+df['BMI'] = (((df['weight']) * 0.4536) / ((df['height'] * 0.0254)**2)).round(1)
+```
+Then, to bring the problem to a 2-class classification, I will add an **outcome** column calculated based on the **glyhb** feature with the condition that if **glyhb** is greater than or equal to *6.5*, it will be 1 (Diabetes), otherwise it will be 0 (Normal). This will be the target variable of the dataset.
+```python
+# Add outcome column from glyhb, 0 for Normal and 1 for Diabetes
+df['outcome'] = np.where(df['glyhb'] >= 6.5, 1, 0)
+```
+|![](images/final_data.png)|
+|:--:|
+|**Fig.9. Two new columns are added to the dataset**|
+
+### 4. EDA after cleaning
+To facilitate the model building later, I will conduct the final EDA test. First, I will check the correlation between the features and the target variable. Because the target variable is binary and the features also have 2 data types: continuous and categorical. So I will divide into 2 groups to check the correlation. Group 1 will use the Point Biserial method to check the correlation between the continuous variable features and the target.
+```python
+# Check correlation
+# Continous numeric feature
+continuous_numeric = ['chol','stab.glu','hdl','ratio','glyhb','age','height','weight','bp.1s','bp.1d','waist','hip','time.ppn','BMI']
+
+from scipy.stats import pointbiserialr
+
+for col in continuous_numeric:
+    corr, p_value = pointbiserialr(df[col], df['outcome'])
+    print(f"Correlation between {col} and Outcome: {corr:.4f}, p-value: {p_value:.4f}")
+```
+And here is the result:
+|![](images/result_biserial.png)|
+|:--:|
+|**Fig.10. The correlation between continous features and target variable**|
+
