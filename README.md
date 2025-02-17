@@ -156,3 +156,25 @@ And here is the result:
 |:--:|
 |**Fig.10. The correlation between continous features and target variable**|
 
+The second group will consist of categorical features, I will use Chi-square test to check the correlation between them and the target variable:
+```python
+# Categorical numeric feature
+categorical_numeric = ['location','gender','frame']
+
+from scipy.stats import chi2_contingency
+
+for col in categorical_numeric:
+    contingency_table = pd.crosstab(df[col], df['outcome'])
+    chi2, p_value, _, _ = chi2_contingency(contingency_table)
+    print(f"Chi-square test between {col} and Outcome: p-value = {p_value:.4f}")
+```
+|![](images/chi_square.png)|
+|:--:|
+|**Fig.11. The correlation between categorical features and target variable**|
+
+After performing EDA before conducting data preprocessing for model training, I have some preliminary assessments as follows:
+  - Initial correlation analysis: I tested the correlation between features and target variables using **Point-Biserial** and **Chi-square** to determine which features are likely to affect the outcome. However, it should be noted that these tests only reflect the linear relationship between each feature and the target independently. Therefore, a feature with a p-value greater than 0.05 does not mean that it has no influence on the model, but the relationship between that feature and the outcome may be nonlinear or only clearly shown when considered together with other features. Correlation testing only provides a preliminary view of the data, helping to detect features that are likely to have a strong impact. However, to make a more comprehensive assessment of the importance of features in the model, it is necessary to use more comprehensive evaluation methods instead of just considering the independent relationship between each feature and the target.
+    
+  - Outlier handling: Based on the data distribution and the proportion of classes in the target variable, I found that the dataset has a large imbalance. Careless handling of outliers can lose important information, especially in a dataset with a limited number of samples. Therefore, I decided not to handle outliers and instead use tree-based models such as **Random Forest** or **XGBoost** to reduce the impact of outliers on the prediction results.
+
+    
