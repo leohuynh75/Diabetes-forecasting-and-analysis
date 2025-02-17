@@ -181,4 +181,28 @@ After performing EDA before conducting data preprocessing for model training, I 
 |:--:|
 |**Fig.12. The pie chart showing the imbalance between Normal and Diabetes classes**|
 
-    
+### 5. Data preprocessing
+First, I must encode the object data types (**location**, **gender**, **frame**) into binary form using one hot encoding technique.
+```python
+object_col = ['location','gender','frame']
+df_encoded = pd.get_dummies(df, columns= object_col, dtype = 'int', drop_first= True)
+df_encoded.drop('id', axis=1, inplace=True)
+
+# Move the target variable to the last position of the dataframe
+a = df_encoded['outcome']
+df_encoded.drop('outcome', axis=1, inplace = True)
+df_final = pd.concat([df_encoded, a], axis=1)
+```
+|![](images/encode.png)|
+|:--:|
+|**Fig.13. The dataset after using one-hot encoding technique**|
+
+Next, I need to remove the column **glyhb** from the dataset before building the model. Because the target variable is directly created from this column, so if we keep it in the model, which can make the model biased toward this relationship and ignore the others.
+```python
+df_final.drop('glyhb', axis=1, inplace=True)
+```
+Now we have 403 samples and 18 columns in total.
+
+### 6. Building Machine Learing models
+
+
