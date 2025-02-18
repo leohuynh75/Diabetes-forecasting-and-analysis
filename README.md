@@ -288,5 +288,5 @@ print(classification_report(y_test, Y_pred_4, target_names=['Normal', 'Diabetes'
 |:--:|:--:|
 | **Fig.20. Confusion matrix of the Random Forest for the second case**| **Fig.21. Confusion matrix of the XGBoost for the second case**|
 
-
-
+From the above results, we can see the effectiveness of using oversampling for severely imbalanced data problems, which is to significantly improve the prediction performance for the minority class. Because the purpose of this project will be to predict diabetics, improving the **Recall** for this class, as well as being able to balance the **Precision** metric, is very important. And the results show that both models have done this well, with the **Precision**, **F1-score** and especially **Recall** all significantly improved compared to when not handling imbalance.
+ 
