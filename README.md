@@ -239,4 +239,54 @@ print(classification_report(y_test, Y_pred_2, target_names=['Normal', 'Diabetes'
 |:--:|:--:|
 | **Fig.14. Classification report of the Random Forest for the first case**| **Fig.15. Classification report of the XGBoost for the first case**|
 
+And here are confusion matrices of the two models
+|![](images/matrix_1.png)|![](images/matrix_2.png)|
+|:--:|:--:|
+| **Fig.16. Confusion matrix of the Random Forest for the first case**| **Fig.17. Confusion matrix of the XGBoost for the first case**|
+
+We can see that, although the **Accuracy** metric is very high for both models (*90%*), it is because this metric has been fooled when encountering a serious imbalance between classes, so we cannot use this metric to evaluate in this circumstance. Therefore, if the imbalance between classes in the dataset is not handled, the model will give very bad performance in terms of the ability to recognize people with real diseases (low **Recall**). This is extremely dangerous if the model is applied in practice because it will miss people with real diseases. So, let's move to the second case where I solve the imbalance by oversampling technique.
+
+#### 2. Handling imbalance
+I will use an oversampling technique called **Borderline SMOTE**, which is capable of generating synthetic samples for minority classes located near the classification border between the two classes, thereby helping to balance the number of samples between the two sides.
+```python
+# Make a copy from original dataset
+df_oversampling = df_final.copy()
+
+X = df_oversampling.drop('outcome', axis=1)
+y = df_oversampling['outcome']
+
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.3, random_state=42)
+
+# Import the package to use Borderline SMOTE
+from imblearn.over_sampling import BorderlineSMOTE
+# Use SMOTE Borderline to solve imbalance between classes
+smote_border = BorderlineSMOTE(kind = "borderline-1", random_state=42)
+X_train_smote_border, y_train_smote_border = smote_border.fit_resample(X_train,y_train)
+
+# Using Random Forest
+model_3 = RandomForestClassifier(n_jobs= -1, random_state=42)
+model_3.fit(X_train_smote_border, y_train_smote_border)
+Y_prob_3 = model_3.predict_proba(X_test)[:,1]
+threshold = 0.5
+Y_pred_3 = (Y_prob_3 >= threshold).astype(int)
+print(classification_report(y_test, Y_pred_3, target_names=['Normal', 'Diabetes']))
+```
+```python
+# Using XGBoost
+model_4 = XGBClassifier()
+model_4.fit(X_train_smote_border, y_train_smote_border)
+Y_prob_4 = model_4.predict_proba(X_test)[:,1]
+threshold = 0.4
+Y_pred_4 = (Y_prob_4 >= threshold).astype(int)
+print(classification_report(y_test, Y_pred_4, target_names=['Normal', 'Diabetes']))
+```
+|![](images/result_model3.png)|![](images/result_model4.png)|
+|:--:|:--:|
+| **Fig.18. Classification report of the Random Forest for the second case**| **Fig.19. Classification report of the XGBoost for the second case**|
+
+|![](images/matrix_3.png)|![](images/matrix_4.png)|
+|:--:|:--:|
+| **Fig.20. Confusion matrix of the Random Forest for the second case**| **Fig.21. Confusion matrix of the XGBoost for the second case**|
+
+
 
