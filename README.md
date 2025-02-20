@@ -291,4 +291,32 @@ print(classification_report(y_test, Y_pred_4, target_names=['Normal', 'Diabetes'
 From the above results, we can see the effectiveness of using oversampling for severely imbalanced data problems, which is to significantly improve the prediction performance for the minority class. Because the purpose of this project will be to predict diabetics, improving the **Recall** for this class, as well as being able to balance the **Precision** metric, is very important. And the results show that both models have done this well, with the **Precision**, **F1-score** and especially **Recall** all significantly improved compared to when not handling imbalance.
 
 ### 7. Feature analysis
+To analyze feature importance, I will use the **SHAP** method. This is a method that helps explain the impact of each feature on the prediction results of a Machine Learning model, showing which features have a positive or negative influence on the output results. This method can overcome the weaknesses of correlation tests such as Point-Biserial and Chi-square, which only measure the relationship between each feature and the target independently, and assume a linear relationship between variables. This may miss nonlinear interactions or indirect effects between features. In contrast, **SHAP** allows assessing the impact of each feature in the context of the entire model, providing a more comprehensive and comprehensive view of the importance of features. And to use SHAP, first, I will have to install the **SHAP** library first and then import the **Shap** package.
+```python
+! pip install shap
+
+import shap
+```
+```python
+explainer = shap.Explainer(model_4, X_train_smote_border) # Create a variable Explainer
+shap_values = explainer(X_test) # Use this variable to explain the result on X test to find shap values for each feature
+```
+|![](images/shap_plot_2.png)|![](images/shap_plot_1.png)|
+|:--:|:--:|
+|**Fig.22. The plot showing the mean SHAP value of each feature**|**Fig.23. The plot showing how each feature affects the predicting result of the model**|
+
+Let me explain a little about these two special graphs. First is the plot on the left, this plot will show us which features have the biggest impact on the model's prediction results through the mean SHAP value. We can see that the **stab.glu** (Stabilized Glucose) feature has the biggest impact, followed by **age**, **chol** (Cholesterol), **gender_male**, etc. 
+
+In the remaining plot, it will show us how these features affect the output of the model. Specifically, red dots represent high values ​​of the feature, conversely, blue dots represent low values. For example, the feature **stab.glu**, we see that on the right side of the plot, there are many red dots, which means that when the value of this feature increases or can be understood as when the amount of Glucose increases, the prediction result of the model will tend towards the result of 1 (ie having Diabetes). On the left side, there are many blue dots, showing that when the amount of blood sugar decreases, the possibility of getting the disease also decreases. Applying this explanation to the remaining features, we will see the trend of these features affecting the output of the model. 
+
+To reinforce my analysis, I used Power Bi for visualization and the detailed results of those analyses I have explained in the **Graduation_project.ppt** file, attached with this read.me file. I have done feature importance analysis for the top 6 features that have strong impact on the model output in this ppt file. You can check it out.
+
+### 8. Conclusion
+After analyzing the features, I have some conclusions as follows:
+  - Glucose and HBA1c are 2 important indicators for diagnosing diabetes. 
+  - Other indicators such as Cholesterol, HDl, blood pressure, etc., are closely related to the above 2 indicators. They can act as warning indicators of the sequelae of the disease. Because diabetic patients often die from complications such as atherosclerosis, cardiovascular disease, kidney failure, pancreatic failure, infection, etc., more than actually dying from this disease.
+
+And here are some of my suggestions from the above results:
+  - Patients need to maintain these indicators at the allowable threshold to avoid danger.
+  - Apply healthy lifestyles for better prevention and treatment, especially in the elderly.
 
