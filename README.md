@@ -309,7 +309,7 @@ Let me explain a little about these two special graphs. First is the plot on the
 
 In the remaining plot, it will show us how these features affect the output of the model. Specifically, red dots represent high values ​​of the feature, conversely, blue dots represent low values. For example, the feature **stab.glu**, we see that on the right side of the plot, there are many red dots, which means that when the value of this feature increases or can be understood as when the amount of Glucose increases, the prediction result of the model will tend towards the result of 1 (ie having Diabetes). On the left side, there are many blue dots, showing that when the amount of blood sugar decreases, the possibility of getting the disease also decreases. Applying this explanation to the remaining features, we will see the trend of these features affecting the output of the model. 
 
-To reinforce my analysis, I used Power Bi for visualization and the detailed results of those analyses I have explained in the **Graduation_project.ppt** file, attached with this read.me file. I have done feature importance analysis for the top 6 features that have strong impact on the model output in this ppt file. You can check it out.
+To reinforce my analysis, I used Power Bi for visualization and the detailed results of those analyses I have explained in the **Graduation_project.pptx** file, attached with this read.me file. I have done feature importance analysis for the top 6 features that have strong impact on the model output in this Power Point file. You can check it out.
 
 ### 8. Conclusion
 After analyzing the features, I have some conclusions as follows:
